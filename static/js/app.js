@@ -1,13 +1,14 @@
-var postsApp = angular.module('postsApp', ['ui.router'])
-    .run(['$rootScope', '$state', '$stateParams',
-            function($rootScope, $state, $stateParams) {
+var reportApp = angular.module('reportApp', ['ui.router'])
+    .run(['$rootScope', '$state', '$stateParams', '$cacheFactory',
+            function($rootScope, $state, $stateParams, $cacheFactory) {
                 // Make the state accessible from the root scope
                 $rootScope.$state = $state;
                 $rootScope.$stateParams = $stateParams;
+                $rootScope.cache = $cacheFactory('reportCache');
             }
         ]);
 
-postsApp.config(['$stateProvider', '$urlRouterProvider',
+reportApp.config(['$stateProvider', '$urlRouterProvider',
     function($stateProvider, $urlRouterProvider) {
 
         $urlRouterProvider
@@ -36,13 +37,19 @@ postsApp.config(['$stateProvider', '$urlRouterProvider',
                 }})});
     }]);
 
-postsApp.controller('NavbarCtrl', function($scope, $http) {
+reportApp.controller('NavbarCtrl', function($scope, $http) {
+    var cache = $scope.$root.cache,
+        user = cache.get('user');
+    if (user) {
+        $scope.user = user;
+        return;
+    }
     $http.get('/api/user').success(function(data) {
+        cache.put('user', data);
         $scope.user = data;
     });
 });
 
-postsApp.controller('MenuCtrl', function($scope, $location) {
+reportApp.controller('MenuCtrl', function($scope, $location) {
     $scope.state = $scope.$root.$state.current.name;
-    window.d = $scope.$root;
 });
