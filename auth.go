@@ -8,14 +8,17 @@ import (
 
 	"code.google.com/p/goauth2/oauth"
 	"github.com/google/go-github/github"
-	"github.com/gorilla/securecookie"
 	"github.com/gorilla/context"
+	"github.com/gorilla/securecookie"
 )
 
 var oauthConfig *oauth.Config
 var cookieSecret []byte
+
 const cookieName = "posts-auth"
+
 type ContextKey int
+
 const ContextUserLogin ContextKey = 0
 const ContextUserName ContextKey = 1
 
