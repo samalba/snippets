@@ -57,7 +57,8 @@ type Snippet struct {
 	Id        int64
 	Week      int64 // Week number
 	Year      int64
-	UserId    int64 // ForeignKey to a User
+	Content   string `sql:"type:text;"`
+	UserId    int64  // ForeignKey to a User
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt time.Time
@@ -78,8 +79,9 @@ func init() {
 	gormDb.CreateTable(&TeamMembership{})
 	gormDb.CreateTable(&Team{})
 	gormDb.CreateTable(&Organization{})
+	gormDb.CreateTable(&Snippet{})
 	// Migrations
-	gormDb.AutoMigrate(&User{}, &TeamMembership{}, &Team{}, &Organization{})
+	gormDb.AutoMigrate(&User{}, &TeamMembership{}, &Team{}, &Organization{}, &Snippet{})
 }
 
 func getDB() gorm.DB {
