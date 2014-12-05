@@ -53,6 +53,16 @@ type User struct {
 	DeletedAt       time.Time
 }
 
+type Snippet struct {
+	Id        int64
+	Week      int64 // Week number
+	Year      int64
+	UserId    int64 // ForeignKey to a User
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt time.Time
+}
+
 var gormDb gorm.DB
 
 func init() {
