@@ -15,7 +15,7 @@ import (
 var oauthConfig *oauth.Config
 var cookieSecret []byte
 
-const cookieName = "posts-auth"
+const cookieName = "snippets-auth"
 
 type ContextKey int
 

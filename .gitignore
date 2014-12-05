@@ -21,4 +21,5 @@ _testmain.go
 
 *.exe
 
-posts
+snippets
+snippets.db

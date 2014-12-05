@@ -1,14 +1,14 @@
-var reportApp = angular.module('reportApp', ['ui.router'])
+var app = angular.module('snippetsApp', ['ui.router'])
     .run(['$rootScope', '$state', '$stateParams', '$cacheFactory',
             function($rootScope, $state, $stateParams, $cacheFactory) {
                 // Make the state accessible from the root scope
                 $rootScope.$state = $state;
                 $rootScope.$stateParams = $stateParams;
-                $rootScope.cache = $cacheFactory('reportCache');
+                $rootScope.cache = $cacheFactory('snippetsCache');
             }
         ]);
 
-reportApp.config(['$stateProvider', '$urlRouterProvider',
+app.config(['$stateProvider', '$urlRouterProvider',
     function($stateProvider, $urlRouterProvider) {
 
         $urlRouterProvider
@@ -37,7 +37,7 @@ reportApp.config(['$stateProvider', '$urlRouterProvider',
                 }})});
     }]);
 
-reportApp.controller('NavbarCtrl', function($scope, $http) {
+app.controller('NavbarCtrl', function($scope, $http) {
     var cache = $scope.$root.cache,
         user = cache.get('user');
     if (user) {
@@ -50,6 +50,6 @@ reportApp.controller('NavbarCtrl', function($scope, $http) {
     });
 });
 
-reportApp.controller('MenuCtrl', function($scope, $location) {
+app.controller('MenuCtrl', function($scope, $location) {
     $scope.state = $scope.$root.$state.current.name;
 });
