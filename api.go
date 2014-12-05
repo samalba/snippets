@@ -8,7 +8,7 @@ import (
 )
 
 func initApiRoutes(r *mux.Router) {
-	r.HandleFunc("/api/user", handlerApiUser).Methods("GET")
+	r.HandleFunc("/api/users/me", handlerApiUsersMe).Methods("GET")
 }
 
 func handlerApiUser(w http.ResponseWriter, r *http.Request) {

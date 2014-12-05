@@ -44,7 +44,7 @@ app.controller('NavbarCtrl', function($scope, $http) {
         $scope.user = user;
         return;
     }
-    $http.get('/api/user').success(function(data) {
+    $http.get('/api/users/me').success(function(data) {
         cache.put('user', data);
         $scope.user = data;
     });
