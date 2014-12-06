@@ -2,6 +2,10 @@
     min-height: 500px;
 }
 
-#snippets-tabset button {
+#snippets-tabset button.btn-success {
+    margin-left: 5px;
+}
+
+#snippets-tabset button.btn-primary {
     float: right;
 }

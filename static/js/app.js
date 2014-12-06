@@ -76,6 +76,12 @@ app.controller('SnippetEditCtrl', function($scope) {
     };
 
     $scope.renderPreview = function() {
+        if (!$scope.editor) {
+            return;
+        }
         $scope.preview = markdown.toHTML($scope.editor.getValue());
+        if (!$scope.preview) {
+            $scope.preview = 'no preview';
+        }
     }
 });
