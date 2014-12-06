@@ -4,18 +4,22 @@
 <head>
     <link rel="stylesheet" href="css/lib/bootstrap.min.css"</link>
     <link rel="stylesheet" href="css/app.css"</link>
-    <script src="js/lib/jquery.min.js"></script>
-    <script src="js/lib/bootstrap.min.js"></script>
+    <script src="js/lib/ace/ace.js"></script>
+    <script src="js/lib/markdown.min.js"></script>
     <script src="js/lib/angular.min.js"></script>
+    <script src="js/lib/angular-sanitize.min.js"></script>
     <script src="js/lib/angular-ui-router.min.js"></script>
+    <script src="js/lib/ui-bootstrap-0.12.0.min.js"></script>
+    <script src="js/lib/ui-bootstrap-tpls-0.12.0.min.js"></script>
+    <script src="js/lib/ui-ace.js"></script>
     <script src="js/app.js"/></script>
 </head>
 
 <body role="document">
     <div ui-view="navbar"></div>
     <div class="row">
-        <div ui-view="menu"></div>
-        <div ui-view="main" class="container" role="main" class="col-xs-10">
+        <div ui-view="menu" class="col-xs-2"></div>
+        <div ui-view="main" class="container col-xs-8" role="main"></div>
     </div>
 </div>
 </body>

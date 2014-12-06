@@ -1,0 +1,11 @@
+<div role="tabpanel" class="nav nav-tabs">
+
+    <tabset id="snippets-tabset">
+    <tab heading="Edit">
+        <div ui-ace="{onLoad: aceLoaded}" ng-model="$scope.editorContent"></div>
+    </tab>
+    <tab heading="Preview" select="renderPreview()"><div ng-bind-html="preview"></div></tab>
+    <button type="button" class="btn btn-primary right">Submit</button>
+    </tabset>
+
+</div>

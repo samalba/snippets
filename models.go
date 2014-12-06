@@ -58,6 +58,7 @@ type Snippet struct {
 	Week      int64 // Week number
 	Year      int64
 	Content   string `sql:"type:text;"`
+	Published bool
 	UserId    int64  // ForeignKey to a User
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -70,6 +71,7 @@ func init() {
 	gormDb, err := gorm.Open("sqlite3", "snippets.db")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Cannot init the db: %s\n", err)
+		os.Exit(1)
 	}
 	gormDb.DB().Ping()
 	gormDb.DB().SetMaxIdleConns(10)

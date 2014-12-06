@@ -1,0 +1,7 @@
+.ace_editor {
+    min-height: 500px;
+}
+
+#snippets-tabset button {
+    float: right;
+}

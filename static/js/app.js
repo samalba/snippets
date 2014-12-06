@@ -1,4 +1,4 @@
-var app = angular.module('snippetsApp', ['ui.router'])
+var app = angular.module('snippetsApp', ['ngSanitize', 'ui.router', 'ui.bootstrap', 'ui.ace'])
     .run(['$rootScope', '$state', '$stateParams', '$cacheFactory',
             function($rootScope, $state, $stateParams, $cacheFactory) {
                 // Make the state accessible from the root scope
@@ -24,12 +24,22 @@ app.config(['$stateProvider', '$urlRouterProvider',
                 controller: 'MenuCtrl'
             }
         };
+
         $stateProvider
+
             .state('index', {
                 url: '/',
                 views: angular.extend({}, views, {'main': {
                     templateUrl: 'html/index.html'
                 }})})
+
+            .state('snippets-new', {
+                url: '/snippets/new',
+                views: angular.extend({}, views, {'main': {
+                    templateUrl: 'html/snippets.edit.html',
+                    controller: 'SnippetEditCtrl'
+                }})})
+
             .state('all-teams', {
                 url: '/all-teams',
                 views: angular.extend({}, views, {'main': {
@@ -52,4 +62,20 @@ app.controller('NavbarCtrl', function($scope, $http) {
 
 app.controller('MenuCtrl', function($scope, $location) {
     $scope.state = $scope.$root.$state.current.name;
+});
+
+app.controller('SnippetEditCtrl', function($scope) {
+
+    $scope.preview = "";
+
+    $scope.aceLoaded = function(editor) {
+        editor.setTheme("ace/theme/textmate");
+        editor.getSession().setMode("ace/mode/markdown");
+        editor.focus();
+        $scope.editor = editor;
+    };
+
+    $scope.renderPreview = function() {
+        $scope.preview = markdown.toHTML($scope.editor.getValue());
+    }
 });
