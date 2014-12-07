@@ -11,15 +11,15 @@
             </ul>
             <form class="navbar-form navbar-left" role="search">
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Search">
+                    <input type="text" class="form-control" placeholder="Coming soon..." disabled>
                 </div>
-                <button type="submit" class="btn btn-default">Submit</button>
+                <button type="submit" class="btn btn-default" disabled>Search</button>
             </form>
 
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown" dropdown>
                     <a href class="dropdown-toggle" dropdown-toggle role="button">
-                        {{ user.userName }} ({{ user.userLogin }}) <span class="caret"></span>
+                        <span class="bold">{{ user.userName }}</span> ({{ user.userLogin }}) <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="/logout">Logout</a></li>

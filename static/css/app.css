@@ -1,4 +1,12 @@
-.ace_editor {
+span.bold {
+    font-weight: bold;
+}
+
+span.italic {
+    font-style: italic;
+}
+
+.ace_editor, #snippets-tabset {
     min-height: 500px;
 }
 

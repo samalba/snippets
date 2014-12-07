@@ -81,7 +81,7 @@ app.controller('SnippetEditCtrl', function($scope) {
         }
         $scope.preview = markdown.toHTML($scope.editor.getValue());
         if (!$scope.preview) {
-            $scope.preview = 'no preview';
+            $scope.preview = '<span class="italic">no preview available</span>';
         }
     }
 });
