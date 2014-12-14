@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 
 	"code.google.com/p/goauth2/oauth"
 	"github.com/google/go-github/github"
@@ -19,8 +20,7 @@ const cookieName = "snippets-auth"
 
 type ContextKey int
 
-const ContextUserLogin ContextKey = 0
-const ContextUserName ContextKey = 1
+const ContextUser ContextKey = 0
 
 func init() {
 	// Oauth init
@@ -63,8 +63,16 @@ func handlerRequireAuth(handler http.Handler) http.Handler {
 			value := make(map[string]string)
 			s := securecookie.New(cookieSecret, nil)
 			if err = s.Decode(cookieName, cookie.Value, &value); err == nil {
-				context.Set(r, ContextUserLogin, value["login"])
-				context.Set(r, ContextUserName, value["name"])
+				// Cookie ok, storing user object in the Request Context
+				user := User{}
+				db := getDB()
+				db.Where("id = ?", value["id"]).First(&user)
+				if user.Id == 0 {
+					w.WriteHeader(403)
+					fmt.Fprintf(w, "User not found")
+					return
+				}
+				context.Set(r, ContextUser, user)
 				handler.ServeHTTP(w, r)
 				return
 			}
@@ -109,8 +117,7 @@ func handlerLoginCallback(w http.ResponseWriter, r *http.Request) {
 	db.Save(&user)
 	// 3rd party auth ok, set cookie
 	value := map[string]string{
-		"login": *gUser.Login,
-		"name":  *gUser.Name,
+		"id": strconv.Itoa(int(user.Id)),
 	}
 	s := securecookie.New(cookieSecret, nil)
 	if encoded, err := s.Encode(cookieName, value); err == nil {
