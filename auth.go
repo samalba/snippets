@@ -48,7 +48,7 @@ func init() {
 	}
 }
 
-func handlerReadCookie(handler http.Handler) http.Handler {
+func handlerRequireAuth(handler http.Handler) http.Handler {
 	cookieHandler := func(w http.ResponseWriter, r *http.Request) {
 		// There are some endpoints where we disable auth
 		publicEndpoints := []string{"/login", "/login/callback", "/_ping"}
@@ -84,16 +84,33 @@ func handlerLoginCallback(w http.ResponseWriter, r *http.Request) {
 	t := &oauth.Transport{Config: oauthConfig}
 	t.Exchange(r.FormValue("code"))
 	client := github.NewClient(t.Client())
-	user, _, err := client.Users.Get("")
+	gUser, _, err := client.Users.Get("")
 	if err != nil {
 		w.WriteHeader(403)
-		fmt.Fprintf(w, "Cannot authenticate")
+		fmt.Fprintf(w, "Cannot authenticate on 3rd party")
 		return
 	}
-	// Auth ok, set cookie
+	// Check if the user is authorized
+	db := getDB()
+	user := User{}
+	db.Where("login = ?", *gUser.Login).First(&user)
+	if user.Id == 0 {
+		// User not found
+		w.WriteHeader(403)
+		fmt.Fprintf(w, "User unauthorized")
+		return
+	}
+	// Refresh user info in the profile
+	user.Name = *gUser.Name
+	user.Company = *gUser.Company
+	user.Email = *gUser.Email
+	user.AvatarURL = *gUser.AvatarURL
+	user.Location = *gUser.Location
+	db.Save(&user)
+	// 3rd party auth ok, set cookie
 	value := map[string]string{
-		"login": *user.Login,
-		"name":  *user.Name,
+		"login": *gUser.Login,
+		"name":  *gUser.Name,
 	}
 	s := securecookie.New(cookieSecret, nil)
 	if encoded, err := s.Encode(cookieName, value); err == nil {

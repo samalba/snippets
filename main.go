@@ -48,7 +48,7 @@ func initRouter() http.Handler {
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir(path.Join(rootDir, "static")))).Methods("GET")
 	// Middlewares
 	handler := handlerAccessLog(r)
-	handler = handlerReadCookie(handler)
+	handler = handlerRequireAuth(handler)
 	handler = context.ClearHandler(handler)
 	return handler
 }
