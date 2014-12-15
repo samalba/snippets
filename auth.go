@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strconv"
+	"encoding/json"
+	"strings"
 
 	"code.google.com/p/goauth2/oauth"
 	"github.com/google/go-github/github"
@@ -60,16 +61,15 @@ func handlerRequireAuth(handler http.Handler) http.Handler {
 		}
 		// Try to read the cookie
 		if cookie, err := r.Cookie(cookieName); err == nil {
-			value := make(map[string]string)
+			var value []byte
 			s := securecookie.New(cookieSecret, nil)
 			if err = s.Decode(cookieName, cookie.Value, &value); err == nil {
 				// Cookie ok, storing user object in the Request Context
 				user := User{}
-				db := getDB()
-				db.Where("id = ?", value["id"]).First(&user)
-				if user.Id == 0 {
+				err = json.Unmarshal(value, &user)
+				if err != nil {
 					w.WriteHeader(403)
-					fmt.Fprintf(w, "User not found")
+					fmt.Fprintf(w, "Invalid cookie")
 					return
 				}
 				context.Set(r, ContextUser, user)
@@ -112,12 +112,17 @@ func handlerLoginCallback(w http.ResponseWriter, r *http.Request) {
 	user.Name = *gUser.Name
 	user.Company = *gUser.Company
 	user.Email = *gUser.Email
-	user.AvatarURL = *gUser.AvatarURL
+	user.AvatarURL = strings.SplitN(*gUser.AvatarURL, "?", 2)[0]
+	fmt.Println(*gUser.AvatarURL)
+	fmt.Println(user.AvatarURL)
 	user.Location = *gUser.Location
 	db.Save(&user)
 	// 3rd party auth ok, set cookie
-	value := map[string]string{
-		"id": strconv.Itoa(int(user.Id)),
+	value, err := json.Marshal(user)
+	if err != nil {
+		w.WriteHeader(500)
+		fmt.Fprintf(w, "Cannot generate the cookie: %s\n", value)
+		return
 	}
 	s := securecookie.New(cookieSecret, nil)
 	if encoded, err := s.Encode(cookieName, value); err == nil {

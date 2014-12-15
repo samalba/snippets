@@ -1,10 +1,15 @@
-var app = angular.module('snippetsApp', ['ngSanitize', 'ui.router', 'ui.bootstrap', 'ui.ace'])
-    .run(['$rootScope', '$state', '$stateParams', '$cacheFactory',
-            function($rootScope, $state, $stateParams, $cacheFactory) {
+var app = angular.module('snippetsApp', ['ngSanitize', 'ngCookies', 'ui.router', 'ui.bootstrap', 'ui.ace'])
+    .run(['$rootScope', '$state', '$stateParams', '$cookies',
+            function($rootScope, $state, $stateParams, $cookies) {
                 // Make the state accessible from the root scope
                 $rootScope.$state = $state;
                 $rootScope.$stateParams = $stateParams;
-                $rootScope.cache = $cacheFactory('snippetsCache');
+                // Read User object from the cookie
+                var c = B64.decode($cookies['snippets-auth']);
+                c = c.split("|")[1];
+                c = B64.decode(c);
+                c = c.substring(c.indexOf("{"));
+                $rootScope.user = JSON.parse(c);
             }
         ]);
 
@@ -47,17 +52,9 @@ app.config(['$stateProvider', '$urlRouterProvider',
                 }})});
     }]);
 
-app.controller('NavbarCtrl', function($scope, $http) {
-    var cache = $scope.$root.cache,
-        user = cache.get('user');
-    if (user) {
-        $scope.user = user;
-        return;
-    }
-    $http.get('/api/users/me').success(function(data) {
-        cache.put('user', data);
-        $scope.user = data;
-    });
+app.controller('NavbarCtrl', function($scope, $cookies) {
+    $scope.user = $scope.$root.user;
+    window.user = $scope.user;
 });
 
 app.controller('MenuCtrl', function($scope, $location) {
