@@ -1,0 +1,7 @@
+<ul>
+    <li><span class="bold">Login</span>: {{ user.Login }}</li>
+    <li><span class="bold">Name</span>: {{ user.Name }}</li>
+    <li><span class="bold">Location</span>: {{ user.Location }}</li>
+    <li><span class="bold">Company</span>: {{ user.Company }}</li>
+    <li ng-if="user.SuperAdmin"><span class="bold">User is an Admin</span></li>
+</ul>

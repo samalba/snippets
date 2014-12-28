@@ -17,3 +17,7 @@ span.italic {
 #snippets-tabset button.btn-primary {
     float: right;
 }
+
+ul#admin-nav {
+    margin-bottom: 20px;
+}

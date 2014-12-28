@@ -4,5 +4,6 @@
         <li role="presentation" class="{{ state == 'my-team' && 'active' }}"><a href="/#/my-team">My Team</a></li>
         <li role="presentation" class="{{ state == 'snippets' && 'active' }}"><a href="/#/snippets">My past snippets</a></li>
         <li role="presentation" class="{{ state == 'all-teams' && 'active' }}"><a href="/#/all-teams">All Teams</a></li>
+        <li role="presentation" ng-if="user.SuperAdmin" class="{{ state.substr(0, 6) == 'admin-' && 'active' }}"><a href ui-sref="admin-users">Admin</a></li>
     </ul>
 </nav>

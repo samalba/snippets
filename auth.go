@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"encoding/json"
-	"strings"
 
 	"code.google.com/p/goauth2/oauth"
 	"github.com/google/go-github/github"
@@ -69,7 +68,7 @@ func handlerRequireAuth(handler http.Handler) http.Handler {
 				err = json.Unmarshal(value, &user)
 				if err != nil {
 					w.WriteHeader(403)
-					fmt.Fprintf(w, "Invalid cookie")
+					fmt.Fprintf(w, "Invalid cookie: %s", err)
 					return
 				}
 				context.Set(r, ContextUser, user)
@@ -112,9 +111,8 @@ func handlerLoginCallback(w http.ResponseWriter, r *http.Request) {
 	user.Name = *gUser.Name
 	user.Company = *gUser.Company
 	user.Email = *gUser.Email
-	user.AvatarURL = strings.SplitN(*gUser.AvatarURL, "?", 2)[0]
-	fmt.Println(*gUser.AvatarURL)
-	fmt.Println(user.AvatarURL)
+	user.AvatarURL = ""
+	user.AvatarURL = *gUser.AvatarURL
 	user.Location = *gUser.Location
 	db.Save(&user)
 	// 3rd party auth ok, set cookie

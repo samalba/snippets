@@ -1,15 +1,22 @@
-var app = angular.module('snippetsApp', ['ngSanitize', 'ngCookies', 'ui.router', 'ui.bootstrap', 'ui.ace'])
-    .run(['$rootScope', '$state', '$stateParams', '$cookies',
-            function($rootScope, $state, $stateParams, $cookies) {
+var app = angular.module('snippetsApp', ['ngSanitize', 'ui.router', 'ui.bootstrap', 'ui.ace'])
+    .run(['$rootScope', '$state', '$stateParams', '$cacheFactory', '$http',
+            function($rootScope, $state, $stateParams, $cacheFactory, $http) {
                 // Make the state accessible from the root scope
                 $rootScope.$state = $state;
                 $rootScope.$stateParams = $stateParams;
-                // Read User object from the cookie
-                var c = B64.decode($cookies['snippets-auth']);
-                c = c.split("|")[1];
-                c = B64.decode(c);
-                c = c.substring(c.indexOf("{"));
-                $rootScope.user = JSON.parse(c);
+                $rootScope.cache = $cacheFactory('snippetsCache');
+                $rootScope.getUser = function(scope) {
+                    var cache = $rootScope.cache,
+                        user = cache.get('user');
+                    if (user) {
+                        scope.user = user;
+                        return;
+                    }
+                    $http.get('/api/users/me').success(function(data) {
+                        cache.put('user', data);
+                        scope.user = data;
+                    });
+                };
             }
         ]);
 
@@ -22,11 +29,11 @@ app.config(['$stateProvider', '$urlRouterProvider',
         var views = {
             'navbar': {
                 templateUrl: 'html/navbar.html',
-                controller: 'NavbarCtrl'
+                controller: 'UserCtrl'
             },
             'menu': {
                 templateUrl: 'html/menu.html',
-                controller: 'MenuCtrl'
+                controller: 'UserCtrl'
             }
         };
 
@@ -38,11 +45,37 @@ app.config(['$stateProvider', '$urlRouterProvider',
                     templateUrl: 'html/index.html'
                 }})})
 
+            .state('settings', {
+                url: '/users/settings',
+                views: angular.extend({}, views, {'main': {
+                    templateUrl: 'html/users-settings.html',
+                    controller: 'UserCtrl'
+                }})})
+
             .state('snippets-new', {
                 url: '/snippets/new',
                 views: angular.extend({}, views, {'main': {
-                    templateUrl: 'html/snippets.edit.html',
+                    templateUrl: 'html/snippets-edit.html',
                     controller: 'SnippetEditCtrl'
+                }})})
+
+            .state('admin-users', {
+                url: '/admin/users/:login',
+                views: angular.extend({}, views, {'main': {
+                    templateUrl: 'html/admin-users.html',
+                    controller: 'AdminUsersCtrl'
+                }})})
+
+            .state('admin-orgs', {
+                url: '/admin/orgs',
+                views: angular.extend({}, views, {'main': {
+                    templateUrl: 'html/admin-orgs.html'
+                }})})
+
+            .state('admin-teams', {
+                url: '/admin/teams',
+                views: angular.extend({}, views, {'main': {
+                    templateUrl: 'html/admin-teams.html'
                 }})})
 
             .state('all-teams', {
@@ -52,13 +85,21 @@ app.config(['$stateProvider', '$urlRouterProvider',
                 }})});
     }]);
 
-app.controller('NavbarCtrl', function($scope, $cookies) {
-    $scope.user = $scope.$root.user;
-    window.user = $scope.user;
+app.controller('UserCtrl', function($scope) {
+    $scope.state = $scope.$state.current.name;
+    $scope.getUser($scope);
 });
 
-app.controller('MenuCtrl', function($scope, $location) {
-    $scope.state = $scope.$root.$state.current.name;
+app.controller('AdminUsersCtrl', function($scope, $http) {
+    $http.get("/api/users").success(function(data) {
+        $scope.users = data;
+    });
+
+    console.log($scope.$stateParams);
+
+    $scope.create = function(user) {
+        console.log(user);
+    };
 });
 
 app.controller('SnippetEditCtrl', function($scope) {
