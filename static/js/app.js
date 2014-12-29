@@ -5,17 +5,8 @@ var app = angular.module('snippetsApp', ['ngSanitize', 'ui.router', 'ui.bootstra
                 $rootScope.$state = $state;
                 $rootScope.$stateParams = $stateParams;
                 $rootScope.cache = $cacheFactory('snippetsCache');
-                $rootScope.getUser = function(scope) {
-                    var cache = $rootScope.cache,
-                        user = cache.get('user');
-                    if (user) {
-                        scope.user = user;
-                        return;
-                    }
-                    $http.get('/api/users/me').success(function(data) {
-                        cache.put('user', data);
-                        scope.user = data;
-                    });
+                $rootScope.httpCfg = {
+                    cache: $rootScope.cache
                 };
             }
         ]);
@@ -85,20 +76,25 @@ app.config(['$stateProvider', '$urlRouterProvider',
                 }})});
     }]);
 
-app.controller('UserCtrl', function($scope) {
+app.controller('UserCtrl', function($scope, $http) {
     $scope.state = $scope.$state.current.name;
-    $scope.getUser($scope);
+    $http.get('/api/users/me', $scope.httpCfg).success(function(data) {
+        $scope.user = data;
+    });
+    window.d = $scope.cache;
 });
 
 app.controller('AdminUsersCtrl', function($scope, $http) {
-    $scope.getUser($scope);
-    $http.get("/api/users").success(function(data) {
+    $http.get('/api/users/me', $scope.httpCfg).success(function(data) {
+        $scope.user = data;
+    });
+    $http.get("/api/users", $scope.httpCfg).success(function(data) {
         $scope.users = data;
     });
 
     if ($scope.$stateParams.login) {
         var login = $scope.$stateParams.login;
-        $http.get("/api/users/" + login).success(function(data) {
+        $http.get("/api/users/" + login, $scope.httpCfg).success(function(data) {
             $scope.editUser = data;
         }).error(function(data) {
             if (data) {
@@ -111,6 +107,7 @@ app.controller('AdminUsersCtrl', function($scope, $http) {
     $scope.create = function(user) {
         $http.post("/api/users", user).success(function() {
             $scope.createSuccess = "User created";
+            $scope.cache.remove("/api/users");
             $scope.$state.go("admin-users", {login: ""}, {reload: true});
         }).error(function() {
             $scope.createError = "Cannot create user";
@@ -133,6 +130,7 @@ app.controller('AdminUsersCtrl', function($scope, $http) {
         }
         $http.delete("/api/users/" + user.Login).success(function() {
             $scope.updateSuccess = "User deleted";
+            $scope.cache.remove("/api/users");
             $scope.$state.go("admin-users", {login: ""}, {reload: true});
         }).error(function() {
             $scope.updateError = "Cannot delete user";
