@@ -20,14 +20,14 @@ func handlerAccessLog(handler http.Handler) http.Handler {
 	return http.HandlerFunc(logHandler)
 }
 
-func jsonResponse(w http.ResponseWriter, data interface{}) {
+func jsonResponse(w http.ResponseWriter, code int, data interface{}) {
 	b, err := json.Marshal(data)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Invalid data in the cache. Cannot JSON encode: %s", err), http.StatusInternalServerError)
 		return
 	}
 	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(200)
+	w.WriteHeader(code)
 	w.Write(b)
 }
 

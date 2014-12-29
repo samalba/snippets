@@ -91,14 +91,52 @@ app.controller('UserCtrl', function($scope) {
 });
 
 app.controller('AdminUsersCtrl', function($scope, $http) {
+    $scope.getUser($scope);
     $http.get("/api/users").success(function(data) {
         $scope.users = data;
     });
 
-    console.log($scope.$stateParams);
+    if ($scope.$stateParams.login) {
+        var login = $scope.$stateParams.login;
+        $http.get("/api/users/" + login).success(function(data) {
+            $scope.editUser = data;
+        }).error(function(data) {
+            if (data) {
+                $scope.updateError = data.error;
+            }
+        });
+        $scope.loginParam = login;
+    }
 
     $scope.create = function(user) {
-        console.log(user);
+        $http.post("/api/users", user).success(function() {
+            $scope.createSuccess = "User created";
+            $scope.$state.go("admin-users", {login: ""}, {reload: true});
+        }).error(function() {
+            $scope.createError = "Cannot create user";
+        });
+    };
+
+    $scope.update = function(user) {
+        // limit user updates to the SuperAdmin flag
+        var data = {"SuperAdmin": user.SuperAdmin};
+        $http.put("/api/users/" + user.Login, data).success(function() {
+            $scope.updateSuccess = "User updated";
+        }).error(function() {
+            $scope.updateError = "Cannot update user";
+        });
+    };
+
+    $scope.delete = function(user) {
+        if (!confirm("Please confirm user deletion")) {
+            return;
+        }
+        $http.delete("/api/users/" + user.Login).success(function() {
+            $scope.updateSuccess = "User deleted";
+            $scope.$state.go("admin-users", {login: ""}, {reload: true});
+        }).error(function() {
+            $scope.updateError = "Cannot delete user";
+        });
     };
 });
 
