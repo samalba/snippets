@@ -20,7 +20,7 @@ func handlerAccessLog(handler http.Handler) http.Handler {
 	return http.HandlerFunc(logHandler)
 }
 
-func jsonResponse(data interface{}, w http.ResponseWriter) {
+func jsonResponse(w http.ResponseWriter, data interface{}) {
 	b, err := json.Marshal(data)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Invalid data in the cache. Cannot JSON encode: %s", err), http.StatusInternalServerError)

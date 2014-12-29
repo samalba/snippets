@@ -2,10 +2,10 @@ package main
 
 import (
 	"crypto/rand"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
-	"encoding/json"
 
 	"code.google.com/p/goauth2/oauth"
 	"github.com/google/go-github/github"

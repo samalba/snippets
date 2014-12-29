@@ -58,7 +58,7 @@ type User struct {
 	AvatarURL          string `sql:"type:varchar(100);"`
 	Location           string `sql:"type:varchar(100);"`
 	SuperAdmin         bool
-	TeamMemberships    []TeamMembership `json:"-"`
+	TeamMemberships    []TeamMembership    `json:"-"`
 	OrganizationAdmins []OrganizationAdmin `json:"-"`
 	CreatedAt          time.Time
 	UpdatedAt          time.Time
