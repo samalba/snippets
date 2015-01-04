@@ -58,9 +58,10 @@ app.config(['$stateProvider', '$urlRouterProvider',
                 }})})
 
             .state('admin-orgs', {
-                url: '/admin/orgs',
+                url: '/admin/orgs/:id',
                 views: angular.extend({}, views, {'main': {
-                    templateUrl: 'html/admin-orgs.html'
+                    templateUrl: 'html/admin-orgs.html',
+                    controller: 'AdminOrgsCtrl'
                 }})})
 
             .state('admin-teams', {
@@ -136,6 +137,10 @@ app.controller('AdminUsersCtrl', function($scope, $http) {
             $scope.updateError = "Cannot delete user";
         });
     };
+});
+
+app.controller('AdminOrgsCtrl', function($scope, $http) {
+    $scope.newOrg = !$scope.$stateParams.id;
 });
 
 app.controller('SnippetEditCtrl', function($scope) {

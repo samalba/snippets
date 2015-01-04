@@ -1,0 +1,60 @@
+<ul id="admin-nav" class="nav nav-tabs">
+    <li role="presentation"><a ui-sref="admin-users">Users</a></li>
+    <li role="presentation" class="active"><a ui-sref="admin-orgs">Organizations</a></li>
+    <li role="presentation"><a ui-sref="admin-teams">Teams</a></li>
+</ul>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 ng-if="newOrg" class="panel-title">Create a new Organization</h3>
+        <h3 ng-if="!newOrg" class="panel-title">Edit Organization "{{ orgNameParam }}"</h3>
+    </div>
+    <div class="panel-body">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="inputName" class="col-sm-2 control-label">Name</label>
+                <div class="col-sm-4">
+                    <input ng-model="org.Name" type="text" class="form-control" id="inputName" required></input>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputDescription" class="col-sm-2 control-label">Description</label>
+                <div class="col-sm-4">
+                    <input ng-model="org.Description" type="text" class="form-control" id="inputDescription" placeholder="(Optional)"></input>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputUrl" class="col-sm-2 control-label">Website URL</label>
+                <div class="col-sm-4">
+                    <input ng-model="org.Url" type="text" class="form-control" id="inputUrl" placeholder="(Optional)"></input>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail" class="col-sm-2 control-label">Contact Email</label>
+                <div class="col-sm-4">
+                    <input ng-model="org.Email" type="text" class="form-control" id="inputEmail" placeholder="name@domain.tld" required></input>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button ng-if="newOrg" ng-click="create(org)" type="submit" class="btn btn-default">Create</button>
+                    <button ng-if="!newOrg" ng-click="update(org)" type="submit" class="btn btn-default">Update</button>
+                    <button ng-if="!newOrg" ng-click="delete(prg)" type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </div>
+            <div ng-if="updateError" class="alert alert-danger col-sm-offset-2 col-sm-4" role="alert">{{ formError }}</div>
+            <div ng-if="updateSuccess" class="alert alert-success col-sm-offset-2 col-sm-4" role="alert">{{ formSuccess }}</div>
+        </form>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Edit Organizations</h3>
+    </div>
+    <div class="panel-body">
+        <ul ng-repeat="org in orgs">
+            <li><a href ng-click="edit(org)" ui-sref="admin-orgs({id: '{{ org.Id }}'})" ui-sref-opts="{reload: true}">{{ org.Name }}</a></li>
+        </ul>
+    </div>
+</div>
