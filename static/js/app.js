@@ -95,12 +95,10 @@ app.controller('AdminUsersCtrl', function($scope, $http) {
 
     if ($scope.$stateParams.login) {
         var login = $scope.$stateParams.login;
-        $http.get("/api/users/" + login, $scope.httpCfg).success(function(data) {
+        $http.get("/api/users/" + login).success(function(data) {
             $scope.editUser = data;
-        }).error(function(data) {
-            if (data) {
-                $scope.updateError = data.error;
-            }
+        }).error(function() {
+            $scope.updateError = "Cannot find this user";
         });
         $scope.loginParam = login;
     }
@@ -130,7 +128,6 @@ app.controller('AdminUsersCtrl', function($scope, $http) {
             return;
         }
         $http.delete("/api/users/" + user.Login).success(function() {
-            $scope.updateSuccess = "User deleted";
             $scope.cache.remove("/api/users");
             $scope.$state.go("admin-users", {login: ""}, {reload: true});
         }).error(function() {
@@ -141,10 +138,49 @@ app.controller('AdminUsersCtrl', function($scope, $http) {
 
 app.controller('AdminOrgsCtrl', function($scope, $http) {
     $scope.newOrg = !$scope.$stateParams.id;
+    $http.get("/api/orgs", $scope.httpCfg).success(function(data) {
+        $scope.orgs = data;
+    });
+
+    if ($scope.$stateParams.id) {
+        $http.get("/api/orgs/" + $scope.$stateParams.id).success(function(data) {
+            $scope.org = data;
+        }).error(function() {
+            $scope.formError = "Cannot find the Organization";
+        });
+    }
+
+    $scope.create = function(org) {
+       $http.post("/api/orgs", org).success(function() {
+            $scope.cache.remove("/api/orgs");
+            $scope.$state.go("admin-orgs", {id: ""}, {reload: true});
+        }).error(function() {
+            $scope.createError = "Cannot create Organization";
+        });
+    };
+
+    $scope.update = function(org) {
+        $http.put("/api/orgs/" + org.Id, org).success(function() {
+            $scope.formSuccess = "Organization updated";
+        }).error(function() {
+            $scope.formError = "Cannot update the Organization";
+        });
+    };
+
+    $scope.delete = function(org) {
+        if (!confirm("Please confirm Organization deletion")){
+            return;
+        }
+        $http.delete("/api/orgs/" + org.Id).success(function() {
+            $scope.cache.remove("/api/orgs");
+            $scope.$state.go("admin-orgs", {id: ""}, {reload: true});
+        }).error(function() {
+            $scope.formError = "Cannot delete Organization";
+        });
+    };
 });
 
 app.controller('SnippetEditCtrl', function($scope) {
-
     $scope.preview = "";
 
     $scope.aceLoaded = function(editor) {

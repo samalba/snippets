@@ -13,6 +13,11 @@ func initApiRoutes(r *mux.Router) {
 	r.HandleFunc("/api/users/{login}", handlerApiUserGet).Methods("GET")
 	r.HandleFunc("/api/users/{login}", handlerApiUserPut).Methods("PUT")
 	r.HandleFunc("/api/users/{login}", handlerApiUserDelete).Methods("DELETE")
+	r.HandleFunc("/api/orgs", handlerApiOrgsGet).Methods("GET")
+	r.HandleFunc("/api/orgs", handlerApiOrgsPost).Methods("POST")
+	r.HandleFunc("/api/orgs/{id}", handlerApiOrgGet).Methods("GET")
+	r.HandleFunc("/api/orgs/{id}", handlerApiOrgPut).Methods("PUT")
+	r.HandleFunc("/api/orgs/{id}", handlerApiOrgDelete).Methods("DELETE")
 }
 
 func jsonError(w http.ResponseWriter, code int, msg string) {

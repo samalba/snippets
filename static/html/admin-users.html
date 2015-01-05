@@ -9,7 +9,7 @@
         <h3 class="panel-title">Create a new User</h3>
     </div>
     <div class="panel-body">
-        <form class="form-horizontal">
+        <form name="createForm" class="form-horizontal">
             <div class="form-group">
                 <label for="inputLogin" class="col-sm-2 control-label">Github handle</label>
                 <div class="col-sm-4">
@@ -18,7 +18,7 @@
             </div>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
-                    <button ng-click="create(newUser)" type="submit" class="btn btn-default">Create</button>
+                    <button ng-click="createForm.$valid && create(newUser)" type="submit" class="btn btn-default">Create</button>
                 </div>
             </div>
             <div ng-if="createError" class="alert alert-danger col-sm-offset-2 col-sm-4" role="alert">{{ createError }}</div>
@@ -32,7 +32,7 @@
         <h3 class="panel-title">Edit user "{{ loginParam }}"</h3>
     </div>
     <div class="panel-body">
-        <form class="form-horizontal">
+        <form name="updateForm" class="form-horizontal">
             <div class="form-group">
                 <label for="inputLogin" class="col-sm-2 control-label">Login</label>
                 <div class="col-sm-4">
@@ -71,8 +71,8 @@
             </div>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
-                    <button ng-click="update(editUser)" type="submit" class="btn btn-default">Update</button>
-                    <button ng-click="delete(editUser)" type="submit" class="btn btn-danger">Delete</button>
+                    <button ng-click="updateForm.$valid && update(editUser)" type="submit" class="btn btn-default">Update</button>
+                    <button ng-click="updateForm.$valid && delete(editUser)" type="submit" class="btn btn-danger">Delete</button>
                 </div>
             </div>
             <div ng-if="updateError" class="alert alert-danger col-sm-offset-2 col-sm-4" role="alert">{{ updateError }}</div>
